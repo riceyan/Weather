@@ -3,6 +3,7 @@ package sg.edu.rp.c346.id21017809.weather;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     ListView lvWeather;
     AsyncHttpClient client;
     ArrayList<Weather> alWeather;
-    WeatherAdapter aaWeather;
+    ArrayAdapter aaWeather;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,20 +30,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         lvWeather = findViewById(R.id.listViewWeather);
+        alWeather = new ArrayList<Weather>();
         client = new AsyncHttpClient();
-        aaWeather = new WeatherAdapter(MainActivity.this, R.layout.activity_main, alWeather);
+        aaWeather = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, alWeather);
         lvWeather.setAdapter(aaWeather);
     }
     @Override
     protected void onResume() {
         super.onResume();
-        ArrayList<Weather> alWeather = new ArrayList<Weather>();
         client.get("https://api.data.gov.sg/v1/environment/2-hour-weather-forecast", new JsonHttpResponseHandler() {
             String area;
             String forecast;
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                alWeather.clear();
                 try {
                     JSONArray jsonArrItems = response.getJSONArray("items");
                     JSONObject firstObj = jsonArrItems.getJSONObject(0);
